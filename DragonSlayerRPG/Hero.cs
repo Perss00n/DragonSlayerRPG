@@ -1,7 +1,6 @@
 ﻿namespace DragonSlayerRPG;
 public class Hero
 {
-
     public string Name { get; set; }
     public int Level { get; set; }
     public int Strength { get; set; }
@@ -12,13 +11,13 @@ public class Hero
 
     public int Health
     {
-        get { return _health >= 0 ? _health : 0; }
-        set { _health = value >= 0 ? value : 0; }
+        get { return _health >= 0 ? _health : 0; } // Om värdet på health är över 0 så visa det aktuella värdet, annars visa 0
+        set { _health = value >= 0 ? value : 0; } // Om värdet på health är över 0 så sätt det aktuella värdet, annars sätt värdet till 0
     }
 
     public bool IsAlive
     {
-        get { return Health > 0; }
+        get { return Health > 0; } // Så länge värdet är över 0 är detta statementet sant, annars falskt (Hjälten är död)
         set { _isAlive = value; }
     }
 

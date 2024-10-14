@@ -1,7 +1,6 @@
 ﻿namespace DragonSlayerRPG;
 public class Dragon
 {
-
     public string? Name { get; set; }
     public int Health { get; set; }
     public int Level { get; set; }
@@ -13,6 +12,4 @@ public class Dragon
 		get { return Health > 0; }
 		set { _isAlive = value; }
 	}
-
-
 }

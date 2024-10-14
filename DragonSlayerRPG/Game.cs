@@ -1,7 +1,4 @@
-﻿using System;
-using System.Text.RegularExpressions;
-
-namespace DragonSlayerRPG;
+﻿namespace DragonSlayerRPG;
 public class Game
 {
     private Hero hero;
@@ -27,8 +24,6 @@ public class Game
         }
         while (isInvalidInput);
         hero = new Hero(name, health, level, strength);
-
-
     }
     public void InitializeEnemies()
     {
@@ -44,6 +39,7 @@ public class Game
 
     public void InitializeBossFight()
     {
+        // Visa olika meddelande varje gång bossen eller hjälten attackerar eller blir attackerad
         Random random = new Random();
         string[] bossAttackMessages =
         {
@@ -149,9 +145,10 @@ public class Game
     public void Start()
     {
         Console.Clear();
-        // Visa olika meddelande beroende på hur många drakar som har dödats
+        // Räkna ut hur många drakar som lever med hjälp utav en Linq method query
         int dragonsAlive = dragons.Where(dragon => dragon.IsAlive).Count();
 
+        // Visa olika meddelande beroende på hur många drakar som har dödats
         if (dragonsAlive == 3)
         {
             Console.WriteLine($"{hero.Name}!");
@@ -224,12 +221,12 @@ public class Game
         Console.Write("Would you like to rest and recover some health before the next battle? (y/n) ");
         string input = Console.ReadLine()!.Trim().ToLower();
 
-        return input == "y" || input == "yes";
+        return input == "y" || input == "yes"; // Tillåt bara y eller yes, allt annat blir false
     }
 
     public void Rest()
     {
-        hero.Health += 25;
+        hero.Health += 25; // Lägg till 25 hp varje gång hjälten vilar
         Console.WriteLine($"You have rested and recovered. {hero.Name}'s health is now {hero.Health}.\n");
     }
 
@@ -238,7 +235,7 @@ public class Game
     {
         Random random = new Random();
 
-        // Visa olika meddelande varje gång en drake eller hero attackerar eller blir attackerad
+        // Visa olika meddelande varje gång en drake eller hjälte attackerar eller blir attackerad
         string[] heroAttackMessages =
         {
         "launches a powerful blow",
@@ -358,8 +355,7 @@ public class Game
 
         } while (hero.Health > 0 && dragons[dragon].Health > 0);
 
+        // Gå vidare till nästa fight
         Start();
     }
-
-
 }
