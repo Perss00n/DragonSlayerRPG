@@ -8,14 +8,12 @@ public class Game
     private Boss finalBoss;
     private List<Dragon> dragons;
 
-
-
     public void CreateNewHero()
     {
         string name = string.Empty;
         int health = 100;
         int level = 1;
-        int strength = 5;
+        int strength = 10;
         bool isInvalidInput;
 
         do
@@ -36,12 +34,12 @@ public class Game
     {
         dragons = new List<Dragon>
         {
-         new Dragon { Name = "Nerakthar", Health = 40, Level = 30, Strength = 10 },
-         new Dragon { Name = "Thalorak ", Health = 50, Level = 60, Strength = 20 },
-         new Dragon { Name = "Eryndor", Health = 60, Level = 90, Strength = 30 }
+         new Dragon { Name = "Nerakthar", Health = 30, Level = 10, Strength = 15 },
+         new Dragon { Name = "Thalorak ", Health = 50, Level = 20, Strength = 25 },
+         new Dragon { Name = "Eryndor", Health = 60, Level = 30, Strength = 35 }
         };
 
-        finalBoss = new Boss { Name = "Aldurak", Health = 20, Strength = 80 };
+        finalBoss = new Boss { Name = "Aldurak", Health = 300, Strength = 40 };
     }
 
     public void InitializeBossFight()
@@ -110,6 +108,11 @@ public class Game
                 Environment.Exit(0);
             }
 
+            Console.WriteLine();
+            Console.Write($"Brace yourself for a counter attack from {finalBoss.Name}!");
+            Console.WriteLine();
+            Console.ReadKey(true);
+
             // Bossen attackerar tillbaka
             int dragonDmg = random.Next(1, 11);
             hero.Health -= dragonDmg;
@@ -127,17 +130,21 @@ public class Game
             }
 
             // Vänta på att användaren ska trycka ner valfri knapp för att starta nästa runda 
-            Console.WriteLine("\nPress any key to continue...\n");
-            Console.ReadKey();
+            Console.WriteLine();
+            Console.Write($"The hero {hero.Name} is ready to make a move on {finalBoss.Name}!");
+            Console.WriteLine();
+            Console.ReadKey(true);
 
         } while (hero.Health > 0 && finalBoss.Health > 0);
     }
 
-    public void StartNewGame()
+
+    public void Start()
     {
         Console.Clear();
         // Visa olika meddelande beroende på hur många drakar som har dödats
         int dragonsAlive = dragons.Where(dragon => dragon.IsAlive).Count();
+
         if (dragonsAlive == 3)
         {
             Console.WriteLine($"{hero.Name}!");
@@ -146,32 +153,33 @@ public class Game
                 "Each of them carries the strength and fury of their master, and they guard his realm with relentless devotion.\r\n\r\nOnly by defeating these three beasts can you reach Aldurak himself and put" +
                 " an end to the reign of terror. Choose your first opponent, and let the legendary battle begin!\n");
         }
-        else if (dragonsAlive == 2)
+        else if (dragonsAlive > 0 && dragonsAlive < 3)
         {
             Console.WriteLine("With a final, thunderous roar, the dragon collapses at your feet. Its massive body trembles one last time before falling silent, and the sky seems to clear, if only for a moment." +
                 " You have emerged victorious, but this is just the beginning.\r\n\r\nThe power of the slain beast courses through you, strengthening your resolve, but in the distance, you feel the looming presence" +
                 " of two more dragons. Each one fiercer, more deadly than the last. They have sensed their fallen kin, and now they prepare to exact their revenge.\r\n\r\nYour journey is far from over. Two challenges remain," +
                 " and with each victory, the path to Aldurak draws nearer. Will you face the next beast now, or take time to gather your strength? The fate of the world rests on your decision.\n");
+
+            // Ge hjälten en chans att vila efter varje fight
+            bool heroWantsToRest = OfferRest();
+            if (heroWantsToRest)
+            {
+                Rest();
+            }
+
+            Console.WriteLine($"You feel ready to continue. There are {dragonsAlive} dragon(s) remaining.");
         }
-        else if (dragonsAlive == 1)
-        {
-            Console.WriteLine("Another mighty dragon falls before your blade, its fiery breath silenced forever. The ground trembles as its lifeless form hits the earth, but even in victory, you feel the weight of the final battle" +
-                " approaching. Only one remains.\r\n\r\nThe last of Aldurak’s servants, the most fearsome of them all, waits for you now. Its roar echoes across the land, shaking mountains and turning the sky black with rage. This is" +
-                " the final guardian, the last obstacle standing between you and the ultimate confrontation with Aldurak.\r\n\r\nYou have come too far to turn back now. Every battle has brought you closer to your destiny. Gather your" +
-                " strength, hero. One more beast must fall before you can face the ancient terror that has haunted this world for centuries. The final dragon awaits.");
-        }
-        else // Bossbattle
+        else // Sista bossen
         {
             Console.WriteLine("The ground beneath your feet quakes, and the very air seems to burn with ancient fury. You have bested all of Aldurak’s servants, and now, the time has come to face the source of this terror. Deep within the shadowed" +
                 " mountains, the final dragon awaits—the most feared and powerful of them all, Aldurak, the Immortal.\r\n\r\nThe sky above darkens as if the world itself fears what is about to unfold. Aldurak’s roar shakes the heavens, a sound so vast" +
                 " and terrible that it seems to tear the earth asunder. This is no ordinary battle; this is the end of an era. Victory means the salvation of all, but defeat… defeat means the world will be consumed by flame and darkness forever." +
                 "\r\n\r\nWith your sword in hand and the strength of all your victories behind you, you step forward into the abyss. There is no turning back now. The fate of the world rests on this final battle. Aldurak awaits.\r\n\r\nPrepare yourself, hero. The time has come.");
 
-            Console.WriteLine("Press ANY key to enter the dungeon...");
+            Console.WriteLine("Press ANY key to enter the dungeon...\n");
             Console.ReadKey(true);
             InitializeBossFight();
         }
-
 
         // Lista alla levande drakar
         for (int i = 0; i < dragons.Count; i++)
@@ -191,10 +199,10 @@ public class Game
             Console.Write($"\nSelect the dragon you want to fight: ");
             isValidInput = Int32.TryParse(Console.ReadLine(), out input);
 
-            if (!isValidInput || input < 1 || input > dragons.Count)
+            if (!isValidInput || input < 1 || input > dragons.Count || !dragons[input - 1].IsAlive)
             {
                 Console.WriteLine($"Invalid input! Please enter a valid integer. Try again...");
-                isValidInput = false; // Sätt till false så loopen fortsätter
+                isValidInput = false;
             }
 
         } while (!isValidInput);
@@ -204,12 +212,23 @@ public class Game
     }
 
 
+    public bool OfferRest()
+    {
+        Console.Write("Would you like to rest and recover some health before the next battle? (y/n) ");
+        string input = Console.ReadLine()!.Trim().ToLower();
+
+        return input == "y" || input == "yes";
+    }
+
+    public void Rest()
+    {
+        hero.Health += 25;
+        Console.WriteLine($"You have rested and recovered. {hero.Name}'s health is now {hero.Health}.\n");
+    }
+
+
     public void Battle(int dragon)
     {
-        // Om användaren eller draken inte lever, tillåt inte spelet att börja utan starta om och välj en levande drake
-        if (hero.Health <= 0 || dragons[dragon].Health <= 0)
-            StartNewGame();
-
         Random random = new Random();
 
         // Visa olika meddelande varje gång en drake eller hero attackerar eller blir attackerad
@@ -270,15 +289,21 @@ public class Game
     };
 
         Console.Clear();
-        Console.WriteLine($"You are now fighting {dragons[dragon].Name}!");
+        Console.WriteLine($"You are now fighting {dragons[dragon].Name}!\n");
 
         // Loopa tills antingen hjälten eller draken är död
         do
         {
             // Hjälten attackerar först
-            int heroDmg = Convert.ToInt32(random.Next(1, 11) + (hero.Strength * 1.5));
+            int baseHeroDamage = random.Next(5, 11); // Bas-skada mellan 5 och 10
+            // Räkna ut hur mycket skada som ska dras av från drakens liv
+            // För varje poäng i styrka ökar skadan med 10 %, och för varje level ökar skadan med 5 %. 
+            int heroDmg = Convert.ToInt32(baseHeroDamage * (1 + (hero.Strength * 0.1) + (hero.Level * 0.05)));
             dragons[dragon].Health -= heroDmg;
+
             Console.WriteLine($"{hero.Name} {heroAttackMessages[random.Next(heroAttackMessages.Length)]} and did {heroDmg} damage to {dragons[dragon].Name}!");
+
+            // Om draken fortfarande är vid liv efter hjältens attack, visa då hur mycket liv som återstår
             if (dragons[dragon].Health > 0)
                 Console.WriteLine($"{dragons[dragon].Name}'s new health is now {dragons[dragon].Health}");
 
@@ -286,14 +311,26 @@ public class Game
             if (dragons[dragon].Health <= 0)
             {
                 Console.WriteLine($"{dragons[dragon].Name} has been defeated!");
+                hero.LevelUp(); // Gå upp i level om draken besegras
                 Console.ReadKey();
                 break;
             }
 
+            Console.WriteLine();
+            Console.Write($"Brace yourself for a counter attack from {dragons[dragon].Name}!");
+            Console.WriteLine();
+            Console.ReadKey(true);
+
             // Draken attackerar tillbaka
-            int dragonDmg = random.Next(1, 11);
+            int baseDragonDamage = random.Next(5, 11); // Bas-skada mellan 5 och 10
+            // Räkna ut hur mycket skada som ska dras av från hjätens liv
+            // För varje poäng i styrka ökar skadan med 10 %, och för varje level ökar skadan med 5 %. 
+            int dragonDmg = Convert.ToInt32(baseDragonDamage * (1 + (dragons[dragon].Strength * 0.1) + (dragons[dragon].Level * 0.05)));
             hero.Health -= dragonDmg;
+
             Console.WriteLine($"{dragons[dragon].Name} {dragonAttackMessages[random.Next(dragonAttackMessages.Length)]} and dealt {dragonDmg} damage to {hero.Name}!");
+
+            // Om hjälten fortfarande är vid liv efter drakens attack, visa då hur mycket liv som återstår
             if (hero.Health > 0)
                 Console.WriteLine($"{hero.Name}'s new health is now {hero.Health}");
 
@@ -301,17 +338,20 @@ public class Game
             if (hero.Health <= 0)
             {
                 Console.WriteLine($"{hero.Name} has been defeated!");
+                Console.WriteLine("You'r journey ends here!\nGAME OVER!");
                 Console.ReadKey();
-                break;
+                Environment.Exit(0);
             }
 
             // Vänta på att användaren ska trycka ner valfri knapp för att starta nästa runda 
-            Console.WriteLine("\nPress any key to continue...\n");
-            Console.ReadKey();
+            Console.WriteLine();
+            Console.Write($"The hero {hero.Name} is ready to make a move on {dragons[dragon].Name}!");
+            Console.WriteLine();
+            Console.ReadKey(true);
 
         } while (hero.Health > 0 && dragons[dragon].Health > 0);
 
-        StartNewGame();
+        Start();
     }
 
 

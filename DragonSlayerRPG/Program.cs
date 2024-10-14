@@ -17,7 +17,7 @@ public class Program
         Game game = new Game();
         game.CreateNewHero();
         game.InitializeEnemies();
-        game.StartNewGame();
+        game.Start();
 
 
 

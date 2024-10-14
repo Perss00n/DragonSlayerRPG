@@ -25,10 +25,16 @@ public class Hero
     public Hero(string name, int health, int level, int strength)
     {
         Name = name;
-        Health = health;
+        Health = health + (level * 10) + (strength * 2); // Skapa startvärden för hjältens liv baserat på level och strength
         Level = level;
         Strength = strength;
     }
 
-
+    public void LevelUp()
+    {
+        Level += 1; // Öka hjältens level med 1
+        Strength += 5; // Öka styrkan med 5
+        Health += (10 + (Strength * 3)); // Öka livet på hjälten
+        Console.WriteLine($"{Name} has leveled up to Level {Level}! New health is {Health} and new strength is {Strength}.");
+    }
 }
