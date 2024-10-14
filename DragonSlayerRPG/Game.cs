@@ -93,8 +93,12 @@ public class Game
         do
         {
             // Hjälten attackerar först
-            int heroDmg = random.Next(1, 11);
+            int baseHeroDamage = random.Next(5, 11); // Bas-skada mellan 5 och 10
+            // Räkna ut hur mycket skada som ska dras av från drakens liv
+            // För varje poäng i styrka ökar skadan med 10 %, och för varje level ökar skadan med 5 %. 
+            int heroDmg = Convert.ToInt32(baseHeroDamage * (1 + (hero.Strength * 0.1) + (hero.Level * 0.05)));
             finalBoss.Health -= heroDmg;
+
             Console.WriteLine($"{bossDragonDamageMessages[random.Next(bossDragonDamageMessages.Length)]} and did {heroDmg} damage to Aldurak!");
 
             if (finalBoss.Health > 0)
@@ -114,9 +118,12 @@ public class Game
             Console.ReadKey(true);
 
             // Bossen attackerar tillbaka
-            int dragonDmg = random.Next(1, 11);
-            hero.Health -= dragonDmg;
-            Console.WriteLine($"Aldurak {bossAttackMessages[random.Next(bossAttackMessages.Length)]} and dealt {dragonDmg} damage to {hero.Name}!");
+            int baseBossDamage = random.Next(5, 11); // Bas-skada mellan 5 och 10
+            // Räkna ut hur mycket skada som ska dras av från hjätens liv
+            // För varje poäng i styrka ökar skadan med 5 % 
+            int bossDmg = Convert.ToInt32(baseBossDamage * (1 + (finalBoss.Strength * 0.05)));
+            hero.Health -= bossDmg;
+            Console.WriteLine($"Aldurak {bossAttackMessages[random.Next(bossAttackMessages.Length)]} and dealt {bossDmg} damage to {hero.Name}!");
 
             if (hero.Health > 0)
                 Console.WriteLine($"{hero.Name}'s new health is now {hero.Health}");
